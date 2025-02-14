@@ -19,9 +19,12 @@ function PhishGuard() {
     }, 300);
 
     try {
-      const response = await axios.post("http://localhost:5000/checkUrl", {
-        url,
-      });
+      const response = await axios.post(
+        "https://phishguard-back.onrender.com/checkUrl",
+        {
+          url,
+        }
+      );
 
       clearInterval(progressInterval);
       setProgress(100);
