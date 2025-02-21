@@ -38,7 +38,7 @@ export default function PhishGuard() {
 
     try {
       const response = await axios.post(
-        "https://phishguard-back.onrender.com/checkUrl",
+        "https://phishguard-back.onrender.com/checkUrl", //change for loacalhost
         { url }
       );
       clearInterval(progressInterval);
