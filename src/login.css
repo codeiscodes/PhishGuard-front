@@ -1,0 +1,68 @@
+/* Centered login form */
+.login-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Ensures proper vertical centering without cutting content */
+}
+
+/* Login form styles */
+.login-form {
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Error message */
+.error-message {
+  color: #ff4d4d;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Input styling */
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #3a3a3a;
+  color: white;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007bff;
+}
+
+/* Login button */
+.login-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}

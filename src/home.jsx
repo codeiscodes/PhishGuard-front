@@ -1,33 +1,27 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import axios from "axios";
-import { IoMdLock, IoMdSearch, IoIosBug } from "react-icons/io";
+import {
+  IoMdLock,
+  IoMdSearch,
+  IoIosBug,
+  IoMdInformationCircleOutline,
+} from "react-icons/io";
 import { GoShieldCheck } from "react-icons/go";
 import { TbVirus } from "react-icons/tb";
-
 import "./home.css";
 import { useNavigate } from "react-router-dom";
-
-const AccordionItem = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="accordion-item">
-      <button className="accordion-button" onClick={() => setIsOpen(!isOpen)}>
-        {title} <span className={`arrow ${isOpen ? "open" : ""}`}>+ </span>
-      </button>
-      {isOpen && <div className="accordion-content">{children}</div>}
-    </div>
-  );
-};
 
 export default function PhishGuard() {
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [scanResult, setScanResult] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    setScanResult(null);
     e.preventDefault();
     setLoading(true);
     setProgress(0);
@@ -38,13 +32,17 @@ export default function PhishGuard() {
 
     try {
       const response = await axios.post(
-        "https://phishguard-back.onrender.com/checkUrl",
-        { url }
+        "https://phishguard-back-4yrj.onrender.com/checkUrl",
+        {
+          url,
+        }
       );
+      console.log(response.data);
       clearInterval(progressInterval);
       setProgress(100);
       setTimeout(() => {
         setStatus(response.data.status);
+        setScanResult(response.data.dataToSend);
         setLoading(false);
       }, 500);
     } catch (error) {
@@ -54,6 +52,15 @@ export default function PhishGuard() {
     }
   };
 
+  const handleUpdate = (e) => {
+    window.alert("Your response has been saved.");
+    setStatus(null);
+    if (e.target.innerText === "No") {
+      axios.get("https://phishguard-back-4yrj.onrender.com/updatePredict");
+    }
+    setUrl("");
+  };
+
   const handleClear = () => {
     setUrl("");
     setStatus(null);
@@ -61,45 +68,21 @@ export default function PhishGuard() {
     setProgress(0);
   };
 
-  const faqs = [
-    {
-      question: "What is an unsafe link?",
-      answer:
-        "An unsafe link is a URL that may lead to malicious websites designed to steal personal information, install malware, or execute phishing attacks.",
-    },
-    {
-      question: "How can I check if any website URL is safe?",
-      answer:
-        "Identifying a safe URL just by looking at it can be tricky. Use our link checker tool for reliable results.",
-    },
-    {
-      question: "What happens if I click on a malicious link?",
-      answer:
-        "Clicking on a malicious link may install malware, steal personal information, or direct you to phishing sites.",
-    },
-    {
-      question: "Does a URL checker identify if a link is a scam?",
-      answer:
-        "Yes, our checker identifies scams by analyzing domain names, website age, and known phishing patterns.",
-    },
-    {
-      question: "How to check phishing links?",
-      answer:
-        "Use a phishing URL scanner that analyzes the link for known threats before clicking.",
-    },
-    {
-      question: "Can I check a shortened URL before opening it?",
-      answer:
-        "Yes, our tool expands shortened URLs to reveal their true destination and check for threats.",
-    },
-  ];
-
   return (
     <div>
       <header className="header">
         <h1>
           <IoMdLock onClick={() => navigate("/server")} /> PhishGuard
         </h1>
+        <button
+          className="submit-button"
+          onClick={() => {
+            navigate("/PhishGuard-front/login");
+            localStorage.setItem("login", false);
+          }}
+        >
+          Logout
+        </button>
       </header>
       <section className="main-section">
         <div className="checker-box">
@@ -113,13 +96,19 @@ export default function PhishGuard() {
           <p>Detect if a URL has a phishing link or is malicious.</p>
           <form onSubmit={handleSubmit} className="url-form">
             <input
+              disabled={localStorage.getItem("login") === "false"}
               type="text"
               className="url-input"
-              placeholder="example.com (http://....)"
+              placeholder={
+                localStorage.getItem("login") === "false"
+                  ? "Please login first...."
+                  : "example.com (http://....)"
+              }
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               required
             />
+
             <button type="submit" className="submit-button">
               <IoMdSearch size={"17px"} /> Scan
             </button>
@@ -145,11 +134,87 @@ export default function PhishGuard() {
           )}
 
           {status !== null && !loading && (
-            <p className={`status-message ${status ? "safe" : "phishing"}`}>
-              {status
-                ? "✅ No phishing detected! Looks safe"
-                : "❌ Warning: This site may be phishing!"}
-            </p>
+            <div>
+              <p className={`status-message ${status ? "safe" : "phishing"}`}>
+                {status
+                  ? "✅ No phishing detected! Looks safe"
+                  : "❌ Warning: This site may be phishing!"}
+              </p>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <p className="review-msg">Is the prediction correct?</p>
+                <IoMdInformationCircleOutline
+                  title="This is based on AI prediction. We will use your answer to make our model perform better!"
+                  size={18}
+                  color="gray"
+                  style={{ marginLeft: "5px", cursor: "pointer" }}
+                />
+              </span>
+              <section className="review-buttons">
+                <button className="submit-button" onClick={handleUpdate}>
+                  Yes
+                </button>
+                <button className="clear-button" onClick={handleUpdate}>
+                  No
+                </button>
+              </section>
+            </div>
+          )}
+          {scanResult && (
+            <div className="scan-result">
+              <h2
+                style={{
+                  fontWeight: "bold",
+                  color: "#222",
+                  textAlign: "center",
+                }}
+              >
+                Scan Results
+              </h2>
+              <div className="scan-details">
+                <div className="scan-row">
+                  <p>
+                    <strong>Source URL:</strong> {scanResult.sourceUrl}
+                  </p>
+                  <p>
+                    <strong>Redirected URL:</strong>{" "}
+                    {scanResult.redirectedUrl || "N/A"}
+                  </p>
+                </div>
+                <div className="scan-row">
+                  <p>
+                    <strong>IP Address:</strong> {scanResult.ip || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Brand:</strong> {scanResult.brand || "Unknown"}
+                  </p>
+                </div>
+                <div className="scan-row">
+                  <p>
+                    <strong>Location:</strong>{" "}
+                    {scanResult.location || "Not available"}
+                  </p>
+                  <p>
+                    <strong>Hosting Provider:</strong>{" "}
+                    {scanResult.hostingProvider || "N/A"}
+                  </p>
+                </div>
+                <div className="scan-row">
+                  <p>
+                    <strong>Detection Date:</strong>{" "}
+                    {scanResult.detectionDate || "N/A"}
+                  </p>
+                  <p>
+                    <strong>ASN:</strong> {scanResult.asn || "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </section>
       )}
@@ -194,16 +259,6 @@ export default function PhishGuard() {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-      <section className="faq-section">
-        <h3>Frequently Asked Questions</h3>
-        <div className="accordion">
-          {faqs.map((faq, index) => (
-            <AccordionItem key={index} title={faq.question}>
-              <p>{faq.answer}</p>
-            </AccordionItem>
-          ))}
         </div>
       </section>
     </div>

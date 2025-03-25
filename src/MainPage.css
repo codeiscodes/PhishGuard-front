@@ -1,0 +1,53 @@
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a2e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.user-icon {
+  font-size: 50px;
+  color: #00aaff;
+  margin-bottom: 20px;
+}
+
+.login-button,
+.register-button {
+  width: 100%;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+
+.login-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.login-button:hover {
+  background-color: #218838;
+}
+
+.register-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.register-button:hover {
+  background-color: #c82333;
+}

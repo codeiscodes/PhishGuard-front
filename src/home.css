@@ -161,6 +161,16 @@ body {
   color: red;
 }
 
+.review-msg {
+  color: black;
+}
+
+.review-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .card-section {
   padding: 10px;
   border-radius: 40px 40px 40px 40px;
@@ -171,6 +181,7 @@ body {
   margin-right: auto;
   background-color: white;
   color: black;
+  margin-bottom: 50px;
 }
 
 .cards {
@@ -269,4 +280,33 @@ body {
 
 .arrow.open {
   transform: rotate(180deg);
+}
+
+.scan-result {
+  background: #ffffff;
+  color: #333;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scan-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scan-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+.scan-row p {
+  font-size: 15px;
+  margin: 0;
+  flex: 1;
+  padding: 0 10px;
 }

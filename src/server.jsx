@@ -13,7 +13,7 @@ function ServerPage() {
     while (!success) {
       try {
         const response = await axios.get(
-          "https://phishguard-back.onrender.com/ping"
+          "https://phishguard-back-4yrj.onrender.com/ping"
         );
         console.log(response);
         if (response.data.code === 200) {
