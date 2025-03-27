@@ -18,6 +18,9 @@ export default function PhishGuard() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [scanResult, setScanResult] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState(""); // Prefill with email
+  const [description, setDescription] = useState(""); // Description input
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -33,6 +36,7 @@ export default function PhishGuard() {
     try {
       const response = await axios.post(
         "https://phishguard-back-4yrj.onrender.com/checkUrl",
+        // "http://localhost:5000/checkUrl",
         {
           url,
         }
@@ -52,13 +56,29 @@ export default function PhishGuard() {
     }
   };
 
-  const handleUpdate = (e) => {
-    window.alert("Your response has been saved.");
-    setStatus(null);
-    if (e.target.innerText === "No") {
-      axios.get("https://phishguard-back-4yrj.onrender.com/updatePredict");
+  const handleYesUpdate = () => {
+    if (scanResult?.sourceUrl) {
+      window.alert(
+        `Redirecting you to ${scanResult.sourceUrl}. Click OK to continue!`
+      );
+      window.open(scanResult.sourceUrl, "_blank"); // Open URL in new tab
     }
+    setStatus(null);
+    setScanResult(null);
     setUrl("");
+  };
+
+  const handleNoUpdate = async () => {
+    setShowModal(false);
+    await axios.post(
+      "https://phishguard-back-4yrj.onrender.com/updatePredict",
+      // "http://localhost:5000/updatePredict",
+      { email, description, url }
+    );
+    window.alert("Mail has been sent!");
+    setDescription("");
+    setEmail("");
+    handleClear();
   };
 
   const handleClear = () => {
@@ -108,7 +128,6 @@ export default function PhishGuard() {
               onChange={(e) => setUrl(e.target.value)}
               required
             />
-
             <button type="submit" className="submit-button">
               <IoMdSearch size={"17px"} /> Scan
             </button>
@@ -156,10 +175,13 @@ export default function PhishGuard() {
                 />
               </span>
               <section className="review-buttons">
-                <button className="submit-button" onClick={handleUpdate}>
+                <button className="submit-button" onClick={handleYesUpdate}>
                   Yes
                 </button>
-                <button className="clear-button" onClick={handleUpdate}>
+                <button
+                  className="clear-button"
+                  onClick={() => setShowModal(true)}
+                >
                   No
                 </button>
               </section>
@@ -220,7 +242,7 @@ export default function PhishGuard() {
       )}
 
       <section className="card-section">
-        <h1>How does PhishGuard Link Checker works?</h1>
+        <h1>How does PhishGuard Link Checker work?</h1>
         <p>
           PhishGuard Link Checker is a free tool designed to verify URLs,
           helping users avoid malware, phishing attempts, and counterfeit
@@ -254,13 +276,59 @@ export default function PhishGuard() {
               <GoShieldCheck size={"30px"} color="#2a83fd" />
               <h3>Give Verdict</h3>
               <p>
-                You'll know if you should trust that URL or not in matter of
+                You'll know if you should trust that URL or not in a matter of
                 seconds.
               </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Modal for 'No' button click */}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Please provide more details</h3>
+            <form onSubmit={handleNoUpdate}>
+              <div className="form-group">
+                <label>Email ID:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Website URL:</label>
+                <input
+                  type="text"
+                  value={url}
+                  disabled
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Description:</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="input-field"
+                  placeholder="Please describe why you think this URL was predicted incorrectly."
+                  required
+                />
+              </div>
+              <div className="form-actions">
+                <button type="submit" className="submit-button">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
