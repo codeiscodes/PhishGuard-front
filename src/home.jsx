@@ -166,7 +166,7 @@ export default function PhishGuard() {
                   justifyContent: "center",
                 }}
               >
-                <p className="review-msg">Is the prediction correct?</p>
+                <p className="review-msg">Do you want to open the link?</p>
                 <IoMdInformationCircleOutline
                   title="This is based on AI prediction. We will use your answer to make our model perform better!"
                   size={18}
